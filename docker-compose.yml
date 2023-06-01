@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "${MYSQL_EXTERNAL_PORT}:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+  api:
+    build: .
+    restart: on-failure
+    command: /bin/nafisah
+    volumes:
+      - .:/app
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    depends_on:
+      - db
+    environment:
+      API_GIN_MODE: "${API_GIN_MODE}"
+      API_PORT: "${API_PORT}"
+      API_JWT_SECRET_KEY: "${API_JWT_SECRET_KEY}"
+      API_MYSQL_DSN: "${API_MYSQL_DSN}"
+  redis:
+    image: redis:7.0-alpine
+    hostname: localhost
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_EXTERNAL_PORT}:6379"
+  elastic_search:
+    image: elasticsearch:8.7.1
+    hostname: localhost
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+volumes:
+  db_data: {}
+  redis_data: {}
+  es_data: {}
