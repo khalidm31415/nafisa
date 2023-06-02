@@ -7,6 +7,7 @@ var (
 	ErrUsernameNotFound = errors.New("username not found")
 	ErrUserIDNotFound   = errors.New("user ID not found")
 	ErrUnauthorized     = errors.New("unauthorized")
+	ErrUnverified       = errors.New("unverified account")
 
 	ErrRecommendationLimitReached = errors.New("recommendation limit reached")
 	ErrRecommendationNotReady     = errors.New("recommendation not ready")

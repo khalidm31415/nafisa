@@ -43,16 +43,21 @@ func (r *Recommendation) FindMatchingProfiles(ctx context.Context) error {
 func (r *Recommendation) View(ctx context.Context) (*dto.RecommendedProfile, error) {
 	currentUser := ctx.Value(internal_constant.ContextUserKey).(*entity.User)
 
+	err := r.db.Preload("Profile").Take(&currentUser).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if !currentUser.Profile.IsVerified {
+		return nil, internal_error.ErrUnverified
+	}
+
 	var userActionCount int
 	r.redisCache.Get(ctx, currentUser.ID, userActionCount)
 	if userActionCount >= internal_constant.MaxProfileRecommendationView {
 		return nil, internal_error.ErrRecommendationLimitReached
 	}
 
-	err := r.db.Preload("Profile").Take(&currentUser).Error
-	if err != nil {
-		return nil, err
-	}
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return nil, internal_error.ErrRecommendationNotReady
 	}
@@ -86,6 +91,11 @@ func (r *Recommendation) ShiftRecommendation(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if !currentUser.Profile.IsVerified {
+		return internal_error.ErrUnverified
+	}
+
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return internal_error.ErrRecommendationNotReady
 	}
@@ -169,6 +179,11 @@ func (r *Recommendation) Like(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if !currentUser.Profile.IsVerified {
+		return internal_error.ErrUnverified
+	}
+
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return internal_error.ErrRecommendationNotReady
 	}
@@ -208,6 +223,11 @@ func (r *Recommendation) Pass(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if !currentUser.Profile.IsVerified {
+		return internal_error.ErrUnverified
+	}
+
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return internal_error.ErrRecommendationNotReady
 	}
