@@ -8,6 +8,9 @@ Backend API for finding your lifetime partner. [Who is Nafisa?](https://en.wikip
 - The recommendation is based on the last education level, age, profile summary, and partner criteria that is stated by the user in signup form.
 - We use [USE model](https://tfhub.dev/google/universal-sentence-encoder/4) to convert the user's profile summary and partner criteria to a vector. We then compute the cosine distance of these two vector to other user profile's summary to approximate the compatibility between the two user profiles.
 
+## ERD
+![Models](./ERD.png)
+
 ## Start The Server
 ```bash
 docker compose up
