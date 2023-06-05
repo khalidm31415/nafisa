@@ -1,10 +1,10 @@
 version: "3.9"
 
 services:
-  db:
+  mysql:
     image: mysql:8.0
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     ports:
       - "${MYSQL_EXTERNAL_PORT}:3306"
     restart: always
@@ -13,21 +13,6 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-  api:
-    build: .
-    restart: on-failure
-    command: /bin/nafisah
-    volumes:
-      - .:/app
-    ports:
-      - "${API_PORT}:${API_PORT}"
-    depends_on:
-      - db
-    environment:
-      API_GIN_MODE: "${API_GIN_MODE}"
-      API_PORT: "${API_PORT}"
-      API_JWT_SECRET_KEY: "${API_JWT_SECRET_KEY}"
-      API_MYSQL_DSN: "${API_MYSQL_DSN}"
   redis:
     image: redis:7.0-alpine
     hostname: localhost
@@ -35,14 +20,35 @@ services:
       - redis_data:/data
     ports:
       - "${REDIS_EXTERNAL_PORT}:6379"
-  elastic_search:
+  elasticsearch:
     image: elasticsearch:8.7.1
     hostname: localhost
+    restart: on-failure
     ports:
-      - "9200:9200"
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
     volumes:
-      - es_data:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
+  backend:
+    build: ./backend
+    restart: on-failure
+    volumes:
+      - .:/app
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      - mysql
+      - redis
+      - elasticsearch
+    environment:
+      BACKEND_GIN_MODE: "${BACKEND_GIN_MODE}"
+      BACKEND_PORT: "${BACKEND_PORT}"
+      BACKEND_JWT_SECRET_KEY: "${BACKEND_JWT_SECRET_KEY}"
+      BACKEND_MYSQL_DSN: "${BACKEND_MYSQL_DSN}"
 volumes:
-  db_data: {}
+  mysql_data: {}
   redis_data: {}
-  es_data: {}
+  elasticsearch_data: {}

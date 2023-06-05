@@ -1,1 +1,4 @@
 .vscode
+backend/__debug_bin
+embeddings/env
+embeddings/__pycache__
