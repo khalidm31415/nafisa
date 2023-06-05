@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend/dto"
 	"backend/entity"
+	"backend/internal_constant"
 	"context"
 	"fmt"
 
@@ -15,6 +16,7 @@ type IUser interface {
 	Signup(ctx context.Context, input dto.SignupInput) error
 	FindByUsername(ctx context.Context, username string) (*entity.User, error)
 	FindByUserID(ctx context.Context, userID string) (*entity.User, error)
+	CurrentUserProfile(ctx context.Context) (*dto.Profile, error)
 }
 
 type User struct {
@@ -96,4 +98,16 @@ func (u *User) FindByUserID(ctx context.Context, userID string) (*entity.User, e
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *User) CurrentUserProfile(ctx context.Context) (*dto.Profile, error) {
+	currentUser := ctx.Value(internal_constant.ContextUserKey).(*entity.User)
+
+	err := u.db.Preload("Profile").Take(&currentUser).Error
+	if err != nil {
+		return nil, err
+	}
+
+	profile := dto.NewProfile(*currentUser)
+	return &profile, nil
 }

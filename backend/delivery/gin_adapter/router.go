@@ -22,7 +22,7 @@ func SetupRouter(controllers *controller.Controllers) *gin.Engine {
 	r.POST("/auth/signup", controllers.Auth.Signup)
 	r.POST("/auth/login", controllers.Auth.Login)
 	r.POST("/auth/logout", controllers.Auth.Logout)
-	r.GET("/auth/current-user", controllers.Auth.AuthMiddleware(), controllers.Auth.CurrentUser)
+	r.GET("/auth/profile", controllers.Auth.AuthMiddleware(), controllers.Auth.CurrentUserProfile)
 
 	r.GET("/verification/unverified-users", controllers.Auth.AuthMiddleware(), controllers.Verification.GetUnverifiedUsers)
 	r.POST("/verification/verify", controllers.Auth.AuthMiddleware(), controllers.Verification.Verify)

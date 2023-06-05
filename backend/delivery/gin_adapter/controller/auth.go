@@ -2,8 +2,10 @@ package controller
 
 import (
 	"backend/dto"
+	"backend/entity"
 	"backend/internal_constant"
 	"backend/usecase"
+	"context"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -14,7 +16,7 @@ type IAuth interface {
 	Signup(c *gin.Context)
 	Login(c *gin.Context)
 	Logout(c *gin.Context)
-	CurrentUser(c *gin.Context)
+	CurrentUserProfile(c *gin.Context)
 	NewAdmin(c *gin.Context)
 	AuthMiddleware() gin.HandlerFunc
 	AdminAuthMiddleware() gin.HandlerFunc
@@ -65,9 +67,16 @@ func (a *Auth) Logout(c *gin.Context) {
 	a.authMiddleware.LogoutHandler(c)
 }
 
-func (a *Auth) CurrentUser(c *gin.Context) {
-	user, _ := c.Get(internal_constant.GinIdentityKey)
-	c.JSON(200, user)
+func (a *Auth) CurrentUserProfile(c *gin.Context) {
+	u, _ := c.Get(internal_constant.GinIdentityKey)
+	user, _ := u.(*entity.User)
+	ctx := context.WithValue(c.Request.Context(), internal_constant.ContextUserKey, user)
+	profile, err := a.usecases.User.CurrentUserProfile(ctx)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, profile)
 }
 
 func (a *Auth) NewAdmin(c *gin.Context) {
