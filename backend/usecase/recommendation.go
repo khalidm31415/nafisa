@@ -99,12 +99,14 @@ func (r *Recommendation) View(ctx context.Context) (*dto.RecommendedProfile, err
 	if err != nil && err != redis.Nil {
 		return nil, err
 	}
-	userActionCount, err := strconv.Atoi(*userActionCountString)
-	if err != nil {
-		return nil, err
-	}
-	if userActionCount >= internal_constant.MaxProfileRecommendationView {
-		return nil, internal_error.ErrRecommendationLimitReached
+	if userActionCountString != nil {
+		userActionCount, err := strconv.Atoi(*userActionCountString)
+		if err != nil {
+			return nil, err
+		}
+		if userActionCount >= internal_constant.MaxProfileRecommendationView {
+			return nil, internal_error.ErrRecommendationLimitReached
+		}
 	}
 
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {

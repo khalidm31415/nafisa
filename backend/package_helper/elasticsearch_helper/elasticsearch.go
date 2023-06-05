@@ -53,7 +53,7 @@ func NewElasticsearchProfileIndex(cfg elasticsearch.Config, embeddings embedding
 	log.Printf("Client: %s", elasticsearch.Version)
 	log.Printf("Server: %s", r["version"].(map[string]interface{})["number"])
 	log.Println(strings.Repeat("~", 37))
-	return &ElasticsearchProfileIndex{es: es}
+	return &ElasticsearchProfileIndex{es: es, embeddings: embeddings}
 }
 
 func (e *ElasticsearchProfileIndex) CreateIndexIfNotExists(ctx context.Context) error {

@@ -11,5 +11,5 @@ RUN go build -o /bin/backend
 FROM alpine:latest
 RUN apk add bash
 COPY --from=build /bin/backend /bin/backend
-COPY .env .
+# COPY .env .
 CMD /bin/backend

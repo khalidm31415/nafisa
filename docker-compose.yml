@@ -32,6 +32,14 @@ services:
       - xpack.security.enabled=false
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+  embeddings:
+    build: ./embeddings
+    restart: on-failure
+    ports:
+      - "${EMBEDDINGS_API_PORT}:${EMBEDDINGS_API_PORT}"
+    environment:
+      EMBEDDINGS_API_PORT: "${EMBEDDINGS_API_PORT}"
+      EMBEDDINGS_API_MODEL: "${EMBEDDINGS_API_MODEL}"
   backend:
     build: ./backend
     restart: on-failure
@@ -43,11 +51,16 @@ services:
       - mysql
       - redis
       - elasticsearch
+      - embeddings
     environment:
       BACKEND_GIN_MODE: "${BACKEND_GIN_MODE}"
       BACKEND_PORT: "${BACKEND_PORT}"
       BACKEND_JWT_SECRET_KEY: "${BACKEND_JWT_SECRET_KEY}"
       BACKEND_MYSQL_DSN: "${BACKEND_MYSQL_DSN}"
+      BACKEND_EMBEDDINGS_API_BASE_URL: "${BACKEND_EMBEDDINGS_API_BASE_URL}"
+      BACKEND_ELASTICSEARCH_PASSWORD: "${BACKEND_ELASTICSEARCH_PASSWORD}"
+      BACKEND_ELASTICSEARCH_CLUSTER_URLS: "${BACKEND_ELASTICSEARCH_CLUSTER_URLS}"
+      BACKEND_ADMIN_TOKEN: "${BACKEND_ADMIN_TOKEN}"
 volumes:
   mysql_data: {}
   redis_data: {}

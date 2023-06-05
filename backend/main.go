@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-redis/redis/v8"
@@ -18,7 +19,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		fmt.Printf("[ERROR]: %v\n", err)
 	}
 
@@ -26,16 +27,15 @@ func main() {
 		Addr: os.Getenv("BACKEND_REDIS_INTERNAL_ADDRESS"),
 	})
 
-	// clusterURLs = []string{"http://elasticsearch:9200", "http://elasticsearch:9300"}
-	clusterURLs := []string{"http://localhost:9201", "http://localhost:9301"}
+	clusterURLs := strings.Split(os.Getenv("BACKEND_ELASTICSEARCH_CLUSTER_URLS"), ",")
 	username := "elastic"
-	password := "kopinikmatnyamandilambung"
+	password := os.Getenv("BACKEND_ELASTICSEARCH_PASSWORD")
 	cfg := elasticsearch.Config{
 		Addresses: clusterURLs,
 		Username:  username,
 		Password:  password,
 	}
-	embeddingsServiceBaseURL := "http://localhost:8000"
+	embeddingsServiceBaseURL := os.Getenv("BACKEND_EMBEDDINGS_API_BASE_URL")
 	embeddings := embeddings_helper.NewEmbeddings(embeddingsServiceBaseURL)
 	profileIndex := elasticsarch_helper.NewElasticsearchProfileIndex(cfg, embeddings)
 	profileIndex.CreateIndexIfNotExists(ctx)
