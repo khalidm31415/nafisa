@@ -4,6 +4,7 @@ import (
 	"backend/delivery/gin_adapter"
 	"backend/delivery/gin_adapter/controller"
 	elasticsarch_helper "backend/package_helper/elasticsearch_helper"
+	"backend/package_helper/embeddings_helper"
 	"backend/package_helper/gorm_helper"
 	"backend/usecase"
 	"context"
@@ -34,7 +35,9 @@ func main() {
 		Username:  username,
 		Password:  password,
 	}
-	profileIndex := elasticsarch_helper.NewElasticsearchProfileIndex(cfg)
+	embeddingsServiceBaseURL := "http://localhost:8000"
+	embeddings := embeddings_helper.NewEmbeddings(embeddingsServiceBaseURL)
+	profileIndex := elasticsarch_helper.NewElasticsearchProfileIndex(cfg, embeddings)
 	profileIndex.CreateIndexIfNotExists(ctx)
 
 	db := gorm_helper.ConnectDatabase()

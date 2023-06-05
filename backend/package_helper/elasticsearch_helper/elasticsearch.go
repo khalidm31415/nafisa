@@ -25,10 +25,11 @@ type IElasticsearchProfileIndex interface {
 }
 
 type ElasticsearchProfileIndex struct {
-	es *elasticsearch.Client
+	es         *elasticsearch.Client
+	embeddings embeddings_helper.IEmbeddings
 }
 
-func NewElasticsearchProfileIndex(cfg elasticsearch.Config) IElasticsearchProfileIndex {
+func NewElasticsearchProfileIndex(cfg elasticsearch.Config, embeddings embeddings_helper.IEmbeddings) IElasticsearchProfileIndex {
 	// 1. Get cluster info
 	r := map[string]interface{}{}
 	es, err := elasticsearch.NewClient(cfg)
@@ -92,6 +93,11 @@ func (e *ElasticsearchProfileIndex) Index(ctx context.Context, profile entity.Us
 	if err != nil {
 		return err
 	}
+	summaryDenseVector, err := e.embeddings.Embed(context.Background(), profile.Summary)
+	if err != nil {
+		return err
+	}
+	profileIndex.SummaryDenseVector = summaryDenseVector
 
 	payload, err := json.Marshal(profileIndex)
 	if err != nil {
@@ -120,11 +126,11 @@ func (e *ElasticsearchProfileIndex) Index(ctx context.Context, profile entity.Us
 }
 
 func (e *ElasticsearchProfileIndex) GetMatchingProfiles(ctx context.Context, profile entity.UserProfile) ([]ElasticSearchProfile, error) {
-	embeddingSummary, err := embeddings_helper.Embed(ctx, profile.Summary)
+	embeddingSummary, err := e.embeddings.Embed(ctx, profile.Summary)
 	if err != nil {
 		return nil, err
 	}
-	embeddingPreferencePartnerCriteria, err := embeddings_helper.Embed(ctx, profile.PreferencePartnerCriteria)
+	embeddingPreferencePartnerCriteria, err := e.embeddings.Embed(ctx, profile.PreferencePartnerCriteria)
 	if err != nil {
 		return nil, err
 	}

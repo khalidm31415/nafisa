@@ -9,10 +9,24 @@ import (
 	"net/url"
 )
 
-func Embed(ctx context.Context, text string) ([]float32, error) {
+type IEmbeddings interface {
+	Embed(ctx context.Context, text string) ([]float32, error)
+}
+
+type Embeddings struct {
+	embeddingsServiceBaseURL string
+}
+
+func NewEmbeddings(embeddingsServiceBaseURL string) IEmbeddings {
+	return &Embeddings{
+		embeddingsServiceBaseURL: embeddingsServiceBaseURL,
+	}
+}
+
+func (e *Embeddings) Embed(ctx context.Context, text string) ([]float32, error) {
 	// Prepare the request URL with the text query parameter
 	encodedText := url.QueryEscape(text)
-	url := fmt.Sprintf("http://localhost:8000/api/embeddings?text=%s", encodedText)
+	url := fmt.Sprintf("%s/api/embeddings?text=%s", e.embeddingsServiceBaseURL, encodedText)
 
 	// Send the GET request to the endpoint
 	resp, err := http.Get(url)
