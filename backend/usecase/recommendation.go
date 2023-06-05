@@ -215,9 +215,12 @@ func (r *Recommendation) IncrementUserAction(ctx context.Context, userID string)
 	if err != nil && err != redis.Nil {
 		return err
 	}
-	userActionCount, err := strconv.Atoi(*userActionCountString)
-	if err != nil {
-		return err
+	userActionCount := 0
+	if userActionCountString != nil {
+		userActionCount, err = strconv.Atoi(*userActionCountString)
+		if err != nil {
+			return err
+		}
 	}
 	now := time.Now()
 	year, month, day := now.Date()
@@ -262,12 +265,29 @@ func (r *Recommendation) Like(ctx context.Context) error {
 		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Update("action", "like").Error; err != nil {
 			return err
 		}
-		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Select("user_likers.liker_user_id").Take(likerUserID).Error; err != nil {
+		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Select("user_likers.liker_user_id").Take(&likerUserID).Error; err != nil {
 			return err
 		}
 		if err := r.db.Model(&entity.UserProfile{}).Update("in_discussion_with_user_id", likerUserID).Error; err != nil {
 			return err
 		}
+	}
+
+	ID, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	var currentRecommendedProfileUserID string
+	if err := r.db.Model(&entity.UserMatchingProfile{ID: *currentUser.Profile.CurrentRecommendationID}).Select("user_matching_profiles.matching_profile_user_id").Take(&currentRecommendedProfileUserID).Error; err != nil {
+		return err
+	}
+	userLiker := entity.UserLiker{
+		ID:          ID.String(),
+		UserID:      currentRecommendedProfileUserID,
+		LikerUserID: currentUser.ID,
+	}
+	if err := r.db.Create(&userLiker).Error; err != nil {
+		return err
 	}
 
 	return nil
