@@ -1,5 +1,5 @@
 # Nafisah
-Backend API for finding marriage partner
+Backend API for finding your lifetime partner. 
 
 ## Getting startted
 ```bash
