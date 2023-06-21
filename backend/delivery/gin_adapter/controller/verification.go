@@ -9,7 +9,6 @@ import (
 	"context"
 	"net/http"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ type IVerification interface {
 }
 
 type Verification struct {
-	authMiddleware *jwt.GinJWTMiddleware
+	authMiddleware gin.HandlerFunc
 	usecases       usecase.Usecases
 }
 

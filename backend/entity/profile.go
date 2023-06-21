@@ -6,6 +6,7 @@ type UserProfile struct {
 	SelfieWithIDCardURL string
 	IsVerified          bool
 	IsPremium           bool
+	IsProfileComplete   bool
 
 	YearBorn      int
 	Sex           string

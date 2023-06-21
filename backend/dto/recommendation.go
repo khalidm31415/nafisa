@@ -20,7 +20,7 @@ func NewRecommendedProfile(user entity.User) RecommendedProfile {
 	age := year - user.Profile.YearBorn
 	return RecommendedProfile{
 		UserID:   user.ID,
-		Username: user.Username,
+		Username: *user.Username,
 
 		Age:           age,
 		Sex:           user.Profile.Sex,

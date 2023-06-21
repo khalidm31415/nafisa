@@ -5,14 +5,15 @@ import (
 )
 
 type Profile struct {
-	UserID        string `json:"user_id"`
-	Username      string `json:"username"`
-	IsVerified    bool   `json:"is_verified"`
-	IsPremium     bool   `json:"is_premium"`
-	YearBorn      int    `json:"year_born"`
-	Sex           string `json:"sex"`
-	LastEducation string `json:"last_education"`
-	Summary       string `json:"summary"`
+	UserID        string  `json:"user_id"`
+	Username      *string `json:"username"`
+	OauthGmail    *string `json:"oauth_gmail"`
+	IsVerified    bool    `json:"is_verified"`
+	IsPremium     bool    `json:"is_premium"`
+	YearBorn      int     `json:"year_born"`
+	Sex           string  `json:"sex"`
+	LastEducation string  `json:"last_education"`
+	Summary       string  `json:"summary"`
 
 	PreferencePartnerCriteria  string `json:"preference_partner_criteria"`
 	PreferenceMinLastEducation string `json:"preference_min_last_education"`
@@ -21,9 +22,11 @@ type Profile struct {
 }
 
 func NewProfile(user entity.User) Profile {
-	return Profile{
-		UserID:        user.ID,
-		Username:      user.Username,
+	profile := Profile{
+		UserID:     user.ID,
+		Username:   user.Username,
+		OauthGmail: user.OauthGmail,
+
 		IsVerified:    user.Profile.IsVerified,
 		IsPremium:     user.Profile.IsPremium,
 		YearBorn:      user.Profile.YearBorn,
@@ -36,6 +39,7 @@ func NewProfile(user entity.User) Profile {
 		PreferenceMaxAge:           user.Profile.PreferenceMaxAge,
 		PreferenceMinAge:           user.Profile.PreferenceMinAge,
 	}
+	return profile
 }
 
 type ProfileIndex struct {
@@ -55,4 +59,20 @@ func NewProfileIndex(profile entity.UserProfile) (*ProfileIndex, error) {
 		LastEducation: profile.LastEducation,
 		Summary:       profile.Summary,
 	}, nil
+}
+
+type CompleteProfileInput struct {
+	Username            string `json:"username" binding:"required"`
+	SelfieWithIDCardURL string `json:"selfieWithIDCardURL" binding:"required"`
+
+	YearBorn      int      `json:"yearBorn" binding:"required"`
+	Sex           string   `json:"sex" binding:"required,oneof=m f"`
+	LastEducation string   `json:"lastEducation" binding:"required"`
+	Summary       string   `json:"summary" binding:"required"`
+	PhotoURLs     []string `json:"photoUrls" binding:"required"`
+
+	PreferencePartnerCriteria  string `json:"preferencePartnerCriteria" binding:"required"`
+	PreferenceMinLastEducation string `json:"preferenceMinLastEducation" binding:"required"`
+	PreferenceMaxAge           int    `json:"preferenceMaxAge" binding:"required"`
+	PreferenceMinAge           int    `json:"preferenceMinAge" binding:"required"`
 }

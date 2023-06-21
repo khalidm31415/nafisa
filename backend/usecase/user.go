@@ -4,6 +4,7 @@ import (
 	"backend/dto"
 	"backend/entity"
 	"backend/internal_constant"
+	"backend/internal_error"
 	"context"
 	"fmt"
 
@@ -14,8 +15,11 @@ import (
 
 type IUser interface {
 	Signup(ctx context.Context, input dto.SignupInput) error
+	GoogleSignup(ctx context.Context, gmail string) error
+	CompleteProfile(ctx context.Context, input dto.CompleteProfileInput) error
 	FindByUsername(ctx context.Context, username string) (*entity.User, error)
 	FindByUserID(ctx context.Context, userID string) (*entity.User, error)
+	FindByGmail(ctx context.Context, gmail string) (*entity.User, error)
 	CurrentUserProfile(ctx context.Context) (*dto.Profile, error)
 }
 
@@ -29,11 +33,56 @@ func NewUser(db *gorm.DB) IUser {
 	}
 }
 
+func (u *User) FindByGmail(ctx context.Context, gmail string) (*entity.User, error) {
+	var user *entity.User
+	if err := u.db.Take(&user, "oauth_gmail = ?", gmail).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, internal_error.ErrGmailNotFound
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *User) GoogleSignup(ctx context.Context, gmail string) error {
+	userID, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	user := entity.User{
+		ID:         userID.String(),
+		OauthGmail: &gmail,
+	}
+	if err := u.db.Save(&user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u *User) Signup(ctx context.Context, input dto.SignupInput) error {
 	userID, err := uuid.NewRandom()
 	if err != nil {
 		return err
 	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(fmt.Errorf("[ERROR] %v", err))
+		return err
+	}
+	hashedPasswordString := string(hashedPassword)
+	user := entity.User{
+		ID:       userID.String(),
+		Username: &input.Username,
+		Password: &hashedPasswordString,
+	}
+	if err := u.db.Create(&user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) CompleteProfile(ctx context.Context, input dto.CompleteProfileInput) error {
+	currentUser := ctx.Value(internal_constant.ContextUserKey).(*entity.User)
 
 	photos := []entity.UserPhoto{}
 	for _, p := range input.PhotoURLs {
@@ -43,20 +92,15 @@ func (u *User) Signup(ctx context.Context, input dto.SignupInput) error {
 		}
 		photos = append(photos, entity.UserPhoto{
 			ID:       photoID.String(),
-			UserID:   userID.String(),
+			UserID:   currentUser.ID,
 			PhotoURL: p,
 		})
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
-	if err != nil {
-		fmt.Println(fmt.Errorf("[ERROR] %v", err))
-		return err
-	}
-
 	profile := entity.UserProfile{
-		UserID:              userID.String(),
+		UserID:              currentUser.ID,
 		SelfieWithIDCardURL: input.SelfieWithIDCardURL,
+		IsProfileComplete:   true,
 
 		YearBorn:      input.YearBorn,
 		Sex:           input.Sex,
@@ -69,15 +113,11 @@ func (u *User) Signup(ctx context.Context, input dto.SignupInput) error {
 		PreferenceMinAge:           input.PreferenceMinAge,
 	}
 
-	user := entity.User{
-		ID:           userID.String(),
-		Username:     input.Username,
-		PasswordHash: string(hashedPassword),
-		Profile:      profile,
-		Photos:       photos,
-	}
+	currentUser.Username = &input.Username
+	currentUser.Profile = profile
+	currentUser.Photos = photos
 
-	if err := u.db.Create(&user).Error; err != nil {
+	if err := u.db.Save(&currentUser).Error; err != nil {
 		return err
 	}
 

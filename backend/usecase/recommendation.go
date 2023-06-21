@@ -90,6 +90,9 @@ func (r *Recommendation) View(ctx context.Context) (*dto.RecommendedProfile, err
 	if err != nil {
 		return nil, err
 	}
+	if !currentUser.Profile.IsProfileComplete {
+		return nil, internal_error.ErrIncompleteProfile
+	}
 
 	if !currentUser.Profile.IsVerified {
 		return nil, internal_error.ErrUnverified

@@ -15,6 +15,8 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 func main() {
@@ -42,7 +44,16 @@ func main() {
 
 	db := gorm_helper.ConnectDatabase()
 	usecases := usecase.NewUsecases(db, rdb, profileIndex)
-	controllers := controller.NewControllers(usecases)
+	googleOauthConfig := oauth2.Config{
+		ClientID:     os.Getenv("BACKEND_GOOGLE_OAUTH_CLIENT_ID"),
+		ClientSecret: os.Getenv("BACKEND_GOOGLE_OAUTH_CLIENT_SECRET"),
+		RedirectURL:  os.Getenv("BACKEND_GOOGLE_OAUTH_REDIRECT_URL"),
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+		},
+		Endpoint: google.Endpoint,
+	}
+	controllers := controller.NewControllers(googleOauthConfig, usecases)
 	r := gin_adapter.SetupRouter(controllers)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("BACKEND_PORT")))

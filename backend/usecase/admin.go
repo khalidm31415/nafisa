@@ -36,17 +36,18 @@ func (a *Admin) NewAdmin(ctx context.Context, input dto.NewAdminInput) error {
 	if err != nil {
 		return err
 	}
-
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Println(fmt.Errorf("[ERROR] %v", err))
 		return err
 	}
+	hashedPasswordString := string(hashedPassword)
 
 	admin := &entity.User{
 		ID:                  userID.String(),
-		Username:            input.Username,
-		PasswordHash:        string(hashedPassword),
+		OauthGmail:          &input.OauthGmail,
+		Username:            &input.Username,
+		Password:            &hashedPasswordString,
 		IsVerificationAdmin: input.IsVerificationAdmin,
 		IsDiscussionAdmin:   input.IsDiscussionAdmin,
 	}

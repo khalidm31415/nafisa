@@ -25,6 +25,6 @@ def embeddings(text: str):
     embeddings = use_model([text])
     return embeddings.numpy().tolist()[0]
 
-port = os.environ.get('EMBEDDINGS_API_PORT', '8080')
+port = os.environ.get('EMBEDDINGS_API_PORT', '8081')
 if __name__ == '__main__':
     uvicorn.run(app, port=int(port), host='0.0.0.0')

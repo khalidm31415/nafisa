@@ -7,7 +7,7 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "${MYSQL_EXTERNAL_PORT}:3306"
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
@@ -15,26 +15,26 @@ services:
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
   redis:
     image: redis:7.0-alpine
-    hostname: localhost
     volumes:
       - redis_data:/data
     ports:
       - "${REDIS_EXTERNAL_PORT}:6379"
+    restart: unless-stopped
   elasticsearch:
     image: elasticsearch:8.7.1
-    hostname: localhost
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "9201:9200"
       - "9301:9300"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
   embeddings:
     build: ./embeddings
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "${EMBEDDINGS_API_PORT}:${EMBEDDINGS_API_PORT}"
     environment:
@@ -42,9 +42,7 @@ services:
       EMBEDDINGS_API_MODEL: "${EMBEDDINGS_API_MODEL}"
   backend:
     build: ./backend
-    restart: on-failure
-    volumes:
-      - .:/app
+    restart: unless-stopped
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     depends_on:

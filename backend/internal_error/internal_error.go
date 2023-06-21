@@ -3,11 +3,13 @@ package internal_error
 import "errors"
 
 var (
-	ErrInternalError    = errors.New("internal error")
-	ErrUsernameNotFound = errors.New("username not found")
-	ErrUserIDNotFound   = errors.New("user ID not found")
-	ErrUnauthorized     = errors.New("unauthorized")
-	ErrUnverified       = errors.New("unverified account")
+	ErrInternalError     = errors.New("internal error")
+	ErrGmailNotFound     = errors.New("gmail not found")
+	ErrUsernameNotFound  = errors.New("username not found")
+	ErrUserIDNotFound    = errors.New("user ID not found")
+	ErrUnauthorized      = errors.New("unauthorized")
+	ErrIncompleteProfile = errors.New("incomplete profile")
+	ErrUnverified        = errors.New("unverified account")
 
 	ErrRecommendationLimitReached = errors.New("recommendation limit reached")
 	ErrRecommendationNotReady     = errors.New("recommendation not ready")

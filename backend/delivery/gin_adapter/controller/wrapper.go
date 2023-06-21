@@ -1,6 +1,10 @@
 package controller
 
-import "backend/usecase"
+import (
+	"backend/usecase"
+
+	"golang.org/x/oauth2"
+)
 
 type Controllers struct {
 	Auth           IAuth
@@ -8,8 +12,8 @@ type Controllers struct {
 	Recommendation IRecommendation
 }
 
-func NewControllers(usecases usecase.Usecases) *Controllers {
-	auth := NewAuth(usecases)
+func NewControllers(googleOauthConfig oauth2.Config, usecases usecase.Usecases) *Controllers {
+	auth := NewAuth(googleOauthConfig, usecases)
 	verification := NewVerification(usecases)
 	recommendation := NewRecommendation(usecases)
 	return &Controllers{
