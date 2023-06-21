@@ -2,7 +2,9 @@
 Backend API for finding your lifetime partner. [Who is Nafisa?](https://en.wikipedia.org/wiki/Khadija_bint_Khuwaylid#Marriage_to_Muhammad)
 
 ## Features
-- Authentication using username and password.
+- Authentication using:
+    - Username and password.
+    - Google OAuth.
 - User need to be verified first before viewing other user profiles.
 - After being verified, the user profile will be indexed in Elasticsearch.
 - The recommendation is based on the last education level, age, profile summary, and partner criteria that is stated by the user in signup form.
