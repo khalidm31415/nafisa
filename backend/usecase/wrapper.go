@@ -12,6 +12,7 @@ type Usecases struct {
 	Admin          IAdmin
 	Verification   IVerification
 	Recommendation IRecommendation
+	Discussion     IDiscussion
 }
 
 func NewUsecases(db *gorm.DB, rdb *redis.Client, profileIndex elasticsarch_helper.IElasticsearchProfileIndex) Usecases {
@@ -19,10 +20,12 @@ func NewUsecases(db *gorm.DB, rdb *redis.Client, profileIndex elasticsarch_helpe
 	admin := NewAdmin(db, profileIndex)
 	verification := NewVerification(db)
 	recommendation := NewRecommendation(db, rdb, profileIndex)
+	discussion := NewDiscussion(db)
 	return Usecases{
 		User:           user,
 		Admin:          admin,
 		Verification:   verification,
 		Recommendation: recommendation,
+		Discussion:     discussion,
 	}
 }

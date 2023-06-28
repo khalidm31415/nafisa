@@ -15,4 +15,5 @@ var (
 	ErrRecommendationNotReady     = errors.New("recommendation not ready")
 	ErrNoMatchingProfileFound     = errors.New("no matching profile found")
 	ErrStillInDiscussion          = errors.New("cannot make any action while in discussion state")
+	ErrNoDiscussionInProgress     = errors.New("user has no discussion in progress")
 )

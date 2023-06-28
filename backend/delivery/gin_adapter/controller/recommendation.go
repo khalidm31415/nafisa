@@ -35,6 +35,7 @@ func (r *Recommendation) MatchProfiles(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	c.Status(http.StatusOK)
 }
 
 func (r *Recommendation) View(c *gin.Context) {

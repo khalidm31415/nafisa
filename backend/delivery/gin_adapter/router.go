@@ -36,5 +36,8 @@ func SetupRouter(controllers *controller.Controllers) *gin.Engine {
 	r.POST("/recommendation/like", controllers.Auth.AuthMiddleware(), controllers.Recommendation.Like)
 	r.POST("/recommendation/pass", controllers.Auth.AuthMiddleware(), controllers.Recommendation.Pass)
 
+	r.POST("/discussion/send", controllers.Auth.AuthMiddleware(), controllers.Discussion.SendMessage)
+	r.POST("/discussion/end", controllers.Auth.AuthMiddleware(), controllers.Discussion.EndDiscussion)
+
 	return r
 }
