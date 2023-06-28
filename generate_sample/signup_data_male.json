@@ -2,7 +2,7 @@
     {
       "username": "abdul",
       "yearBorn": 2000,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "akuntan",
       "summary": "saya tinggal di jakarta. saya suka memelihara kucing dan jogging.",
@@ -14,7 +14,7 @@
     {
       "username": "adi",
       "yearBorn": 1999,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "dokter",
       "summary": "saya tinggal di surabaya. saya suka traveling.",
@@ -26,7 +26,7 @@
     {
       "username": "ardi",
       "yearBorn": 1999,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "SMA",
       "job": "musisi",
       "summary": "saya senang bermain musik terutama gitar.",
@@ -38,7 +38,7 @@
     {
       "username": "budi",
       "yearBorn": 1998,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "software engineer",
       "summary": "saya tinggal di bandung. selain ngoding saya juga suka memasak.",
@@ -50,7 +50,7 @@
     {
       "username": "bimo",
       "yearBorn": 1998,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "data analyst",
       "summary": "saya kuliahnya statistika di UGM, di luar itu saya senang mengamati ekonomi negara",
@@ -62,7 +62,7 @@
     {
       "username": "bisma",
       "yearBorn": 1997,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "product manager",
       "summary": "saya tinggal di bogor, dulu kuliahnya sastra inggris UI, sekarang aktivitas kerja dan olahraga aja, saya suka bulu tangkis",
@@ -74,7 +74,7 @@
     {
       "username": "catur",
       "yearBorn": 1996,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S2",
       "job": "doesen",
       "summary": "saya dosen hukum. selain ngajar saya suka naik gunung kalo lagi libur semester.",
@@ -86,7 +86,7 @@
     {
       "username": "dimas",
       "yearBorn": 1995,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S2",
       "job": "konsultan",
       "summary": "saya konsultan bidang konstruksi bangunan. di luar kerja saya suka perform standup comedy.",
@@ -98,7 +98,7 @@
     {
       "username": "ditama",
       "yearBorn": 1995,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "D3",
       "job": "engineer",
       "summary": "saya kerja di bidang kontruksi khususnya di bagian kelistrikan. saya suka nonton ceramahnya ustadz abdul somad.",
@@ -110,7 +110,7 @@
     {
       "username": "eki",
       "yearBorn": 1995,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S3",
       "job": "pengusaha",
       "summary": "saya menjalankan bisnis di bidang IT. saya suka baca karya-karya nya ustadz quraish shihab.",
@@ -122,7 +122,7 @@
     {
       "username": "faris",
       "yearBorn": 1993,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "dokter",
       "summary": "saya praktek di sebuah rumah sakit di daerah palangkaraya, saya kuliah di surabaya, asalnya memaang dari palangkaraya",
@@ -134,7 +134,7 @@
     {
       "username": "fahri",
       "yearBorn": 1993,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "guru",
       "summary": "saya mengajar di sebuah pesantren di jambi, dulu alhamdulillah saya kuliah di madinah",
@@ -146,7 +146,7 @@
     {
       "username": "fahmi",
       "yearBorn": 1993,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "SMA",
       "job": "driver",
       "summary": "saya bekerja sebagai driver taksi online. saya suka dateng ke kajiannya ustadz yazid di masjid radio rodja",
@@ -158,7 +158,7 @@
     {
       "username": "fahrul",
       "yearBorn": 1992,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "PNS",
       "summary": "saya PNS di kemenkes. di akhir pekan saya biasanya nonton. saya suka film komedi.",
@@ -170,7 +170,7 @@
     {
       "username": "farhan",
       "yearBorn": 1992,
-      "sex": "m",
+      "gender": "m",
       "lastEducation": "S1",
       "job": "pengusaha",
       "summary": "saya menjalankan bisnis kuliner di daerah tangerang. saya suka dengerin lagu-lagunya ed sheeran. saya orang NU.",

@@ -10,7 +10,7 @@ type RecommendedProfile struct {
 	Username string `json:"username"`
 
 	Age           int    `json:"age"`
-	Sex           string `json:"sex"`
+	Gender        string `json:"gender"`
 	LastEducation string `json:"last_education"`
 	Summary       string `json:"summary"`
 }
@@ -23,7 +23,7 @@ func NewRecommendedProfile(user entity.User) RecommendedProfile {
 		Username: *user.Username,
 
 		Age:           age,
-		Sex:           user.Profile.Sex,
+		Gender:        user.Profile.Gender,
 		LastEducation: user.Profile.LastEducation,
 		Summary:       user.Profile.Summary,
 	}

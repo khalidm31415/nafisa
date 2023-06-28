@@ -21,7 +21,9 @@ func ConnectDatabase() *gorm.DB {
 	db.AutoMigrate(&entity.UserProfile{})
 	db.AutoMigrate(&entity.UserPhoto{})
 	db.AutoMigrate(&entity.UserMatchingProfile{})
-	db.AutoMigrate(&entity.UserLiker{})
-	db.AutoMigrate(&entity.UserPendingMatch{})
+	db.AutoMigrate(&entity.Like{})
+	db.AutoMigrate(&entity.Match{})
+	db.AutoMigrate(&entity.Discussion{})
+	db.AutoMigrate(&entity.DiscussionMessage{})
 	return db
 }

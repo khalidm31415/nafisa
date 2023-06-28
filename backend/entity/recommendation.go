@@ -10,19 +10,21 @@ type UserMatchingProfile struct {
 	Action                *string
 }
 
-type UserLiker struct {
+type Like struct {
 	Base
 	ID          string `gorm:"type:varchar(36);primaryKey"`
 	UserID      string `gorm:"type:varchar(36)"`
-	LikerUserID string `gorm:"type:varchar(36)"`
-	LikerUser   User   `gorm:"foreignKey:LikerUserID"`
-	Action      *string
+	User        User
+	LikedUserID string `gorm:"type:varchar(36)"`
+	IsLikedBack *bool
 }
 
-type UserPendingMatch struct {
+// Used for pending matches
+type Match struct {
 	Base
-	ID                 string `gorm:"type:varchar(36);primaryKey"`
-	UserID             string `gorm:"type:varchar(36)"`
-	PendingMatchUserID string `gorm:"type:varchar(36)"`
-	PendingMatchUser   User   `gorm:"foreignKey:PendingMatchUserID"`
+	ID           string `gorm:"type:varchar(36);primaryKey"`
+	MaleUserID   string `gorm:"type:varchar(36)"`
+	MaleUser     User   `gorm:"foreignKey:MaleUserID"`
+	FemaleUserID string `gorm:"type:varchar(36)"`
+	FemaleUser   User   `gorm:"foreignKey:FemaleUserID"`
 }

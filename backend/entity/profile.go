@@ -9,7 +9,7 @@ type UserProfile struct {
 	IsProfileComplete   bool
 
 	YearBorn      int
-	Sex           string
+	Gender        string
 	LastEducation string
 	Summary       string
 
@@ -20,8 +20,7 @@ type UserProfile struct {
 
 	CurrentRecommendationID   *string `gorm:"type:varchar(36)"`
 	CurrentRecommendationType *string
-
-	InDiscussionWithUserID *string
+	CurrentDiscussionID       *string
 }
 
 type UserPhoto struct {

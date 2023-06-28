@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -135,10 +136,13 @@ func (e *ElasticsearchProfileIndex) GetMatchingProfiles(ctx context.Context, pro
 		return nil, err
 	}
 
-	sexFilter := "f"
-	if profile.Sex == "f" {
-		sexFilter = "m"
+	genderFilter := "f"
+	if profile.Gender == "f" {
+		genderFilter = "m"
 	}
+
+	now := time.Now()
+	currentYear, _, _ := now.Date()
 
 	// Create the Elasticsearch query based on the input profile
 	query := map[string]interface{}{
@@ -149,14 +153,14 @@ func (e *ElasticsearchProfileIndex) GetMatchingProfiles(ctx context.Context, pro
 						"filter": []map[string]interface{}{
 							{
 								"term": map[string]string{
-									"sex": sexFilter,
+									"gender": genderFilter,
 								},
 							},
 							{
 								"range": map[string]interface{}{
 									"year_born": map[string]int{
-										"gte": 2023 - profile.PreferenceMaxAge,
-										"lte": 2023 - profile.PreferenceMinAge,
+										"gte": currentYear - profile.PreferenceMaxAge,
+										"lte": currentYear - profile.PreferenceMinAge,
 									},
 								},
 							},

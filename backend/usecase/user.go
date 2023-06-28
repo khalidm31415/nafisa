@@ -103,7 +103,7 @@ func (u *User) CompleteProfile(ctx context.Context, input dto.CompleteProfileInp
 		IsProfileComplete:   true,
 
 		YearBorn:      input.YearBorn,
-		Sex:           input.Sex,
+		Gender:        input.Gender,
 		LastEducation: input.LastEducation,
 		Summary:       input.Summary,
 

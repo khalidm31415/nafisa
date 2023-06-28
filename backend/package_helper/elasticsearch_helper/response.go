@@ -5,7 +5,7 @@ type ElasticSearchProfile struct {
 	Source struct {
 		UserID        string `json:"user_id"`
 		YearBorn      int    `json:"year_born"`
-		Sex           string `json:"sex"`
+		Gender        string `json:"gender"`
 		LastEducation string `json:"last_education"`
 		Summary       string `json:"summary"`
 	} `json:"_source"`

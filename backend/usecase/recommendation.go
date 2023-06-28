@@ -98,6 +98,10 @@ func (r *Recommendation) View(ctx context.Context) (*dto.RecommendedProfile, err
 		return nil, internal_error.ErrUnverified
 	}
 
+	if currentUser.Profile.CurrentDiscussionID != nil {
+		return nil, internal_error.ErrStillInDiscussion
+	}
+
 	userActionCountString, err := r.redisCache.Get(ctx, currentUser.ID)
 	if err != nil && err != redis.Nil {
 		return nil, err
@@ -129,13 +133,13 @@ func (r *Recommendation) View(ctx context.Context) (*dto.RecommendedProfile, err
 		recommendedUser = userMatchingProfile.MatchingProfileUser
 	}
 	if *currentUser.Profile.CurrentRecommendationType == "liker" {
-		userLiker := entity.UserLiker{
+		userLiker := entity.Like{
 			ID: *currentUser.Profile.CurrentRecommendationID,
 		}
-		if err = r.db.Preload("LikerUser.Profile").Take(&userLiker).Error; err != nil {
+		if err = r.db.Preload("User.Profile").Take(&userLiker).Error; err != nil {
 			return nil, err
 		}
-		recommendedUser = userLiker.LikerUser
+		recommendedUser = userLiker.User
 	}
 	recommendedProfile := dto.NewRecommendedProfile(recommendedUser)
 	return &recommendedProfile, nil
@@ -154,17 +158,18 @@ func (r *Recommendation) ShiftRecommendation(ctx context.Context) error {
 
 	liker_exists := true
 	var nextRecommendationID string
-	// current recommendation is from matching profile, next recommendation is from liker
+
+	// case 1: current recommendation is from matching profile, next recommendation is from liker (if exists)
 	if currentUser.Profile.CurrentRecommendationType != nil && *currentUser.Profile.CurrentRecommendationType == "matching_profile" {
 		where := map[string]interface{}{
-			"user_id": currentUser.ID,
-			"action":  nil,
+			"liked_user_id": currentUser.ID,
+			"is_liked_back": nil,
 		}
 		err := r.db.
-			Model(&entity.UserLiker{}).
-			Select("user_likers.id").
+			Model(&entity.Like{}).
+			Select("id").
 			Where(where).
-			Order("user_likers.created_at ASC").
+			Order("created_at ASC").
 			First(&nextRecommendationID).
 			Error
 		if err == gorm.ErrRecordNotFound {
@@ -182,7 +187,7 @@ func (r *Recommendation) ShiftRecommendation(ctx context.Context) error {
 		}
 	}
 
-	// current recommendation is from liker, next recommendation is from matching profile
+	// case 2: current recommendation is from liker, next recommendation is from matching profile
 	if currentUser.Profile.CurrentRecommendationType == nil || *currentUser.Profile.CurrentRecommendationType == "liker" || !liker_exists {
 		where := map[string]interface{}{
 			"user_id": currentUser.ID,
@@ -190,7 +195,7 @@ func (r *Recommendation) ShiftRecommendation(ctx context.Context) error {
 		}
 		err := r.db.
 			Model(&entity.UserMatchingProfile{}).
-			Select("user_matching_profiles.id").
+			Select("id").
 			Where(where).
 			Order("score DESC").
 			First(&nextRecommendationID).
@@ -245,33 +250,39 @@ func (r *Recommendation) Like(ctx context.Context) error {
 	if !currentUser.Profile.IsVerified {
 		return internal_error.ErrUnverified
 	}
-
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return internal_error.ErrRecommendationNotReady
 	}
+	if currentUser.Profile.CurrentDiscussionID != nil {
+		return internal_error.ErrStillInDiscussion
+	}
+
+	isMatch := false
+	var recommendedUserID string
 
 	if *currentUser.Profile.CurrentRecommendationType == "matching_profile" {
-		if err := r.db.Model(&entity.UserMatchingProfile{ID: *currentUser.Profile.CurrentRecommendationID}).Update("action", "like").Error; err != nil {
+		if err := r.db.Model(&entity.UserMatchingProfile{}).Where("id = ?", currentUser.Profile.CurrentRecommendationID).Update("action", "like").Error; err != nil {
 			return err
 		}
-		if err := r.ShiftRecommendation(ctx); err != nil {
+		if err := r.db.Model(&entity.UserMatchingProfile{}).Where("id = ?", currentUser.Profile.CurrentRecommendationID).Select("matching_profile_user_id").Take(&recommendedUserID).Error; err != nil {
 			return err
 		}
-		if err := r.IncrementUserAction(ctx, currentUser.ID); err != nil {
+		var like entity.Like
+		err := r.db.Where("user_id = ? AND liked_user_id = ?", recommendedUserID, currentUser.ID).Take(&like).Error
+		if err == nil {
+			isMatch = true
+		}
+		if err != nil && err != gorm.ErrRecordNotFound {
 			return err
 		}
 	}
 
-	// it's a match!
 	if *currentUser.Profile.CurrentRecommendationType == "liker" {
-		var likerUserID string
-		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Update("action", "like").Error; err != nil {
+		isMatch = true
+		if err := r.db.Model(&entity.Like{}).Where("id = ?", currentUser.Profile.CurrentRecommendationID).Update("is_liked_back", true).Error; err != nil {
 			return err
 		}
-		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Select("user_likers.liker_user_id").Take(&likerUserID).Error; err != nil {
-			return err
-		}
-		if err := r.db.Model(&entity.UserProfile{}).Update("in_discussion_with_user_id", likerUserID).Error; err != nil {
+		if err := r.db.Model(&entity.Like{}).Where("id = ?", currentUser.Profile.CurrentRecommendationID).Select("user_id").Take(&recommendedUserID).Error; err != nil {
 			return err
 		}
 	}
@@ -280,17 +291,48 @@ func (r *Recommendation) Like(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var currentRecommendedProfileUserID string
-	if err := r.db.Model(&entity.UserMatchingProfile{ID: *currentUser.Profile.CurrentRecommendationID}).Select("user_matching_profiles.matching_profile_user_id").Take(&currentRecommendedProfileUserID).Error; err != nil {
-		return err
-	}
-	userLiker := entity.UserLiker{
+	like := entity.Like{
 		ID:          ID.String(),
-		UserID:      currentRecommendedProfileUserID,
-		LikerUserID: currentUser.ID,
+		UserID:      currentUser.ID,
+		LikedUserID: recommendedUserID,
 	}
-	if err := r.db.Create(&userLiker).Error; err != nil {
+	if err := r.db.Create(&like).Error; err != nil {
 		return err
+	}
+	if err := r.ShiftRecommendation(ctx); err != nil {
+		return err
+	}
+	if err := r.IncrementUserAction(ctx, currentUser.ID); err != nil {
+		return err
+	}
+
+	if isMatch {
+		discussionID, err := uuid.NewRandom()
+		if err != nil {
+			return err
+		}
+		discussion := entity.Discussion{
+			ID: discussionID.String(),
+		}
+
+		isUserMale := true
+		if currentUser.Profile.Gender == "f" {
+			isUserMale = false
+		}
+		if isUserMale {
+			discussion.MaleUserID = currentUser.ID
+			discussion.FemaleUserID = recommendedUserID
+		} else {
+			discussion.MaleUserID = recommendedUserID
+			discussion.FemaleUserID = currentUser.ID
+		}
+
+		if err := r.db.Create(&discussion).Error; err != nil {
+			return err
+		}
+		if err := r.db.Model(&entity.UserProfile{}).Where("user_id IN ?", []string{currentUser.ID, recommendedUserID}).Update("current_discussion_id", discussionID.String()).Error; err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -306,9 +348,11 @@ func (r *Recommendation) Pass(ctx context.Context) error {
 	if !currentUser.Profile.IsVerified {
 		return internal_error.ErrUnverified
 	}
-
 	if currentUser.Profile.CurrentRecommendationID == nil || currentUser.Profile.CurrentRecommendationType == nil {
 		return internal_error.ErrRecommendationNotReady
+	}
+	if currentUser.Profile.CurrentDiscussionID != nil {
+		return internal_error.ErrStillInDiscussion
 	}
 
 	if *currentUser.Profile.CurrentRecommendationType == "matching_profile" {
@@ -317,7 +361,7 @@ func (r *Recommendation) Pass(ctx context.Context) error {
 		}
 	}
 	if *currentUser.Profile.CurrentRecommendationType == "liker" {
-		if err := r.db.Model(&entity.UserLiker{ID: *currentUser.Profile.CurrentRecommendationID}).Update("action", "pass").Error; err != nil {
+		if err := r.db.Model(&entity.Like{ID: *currentUser.Profile.CurrentRecommendationID}).Update("is_liked_back", false).Error; err != nil {
 			return err
 		}
 	}

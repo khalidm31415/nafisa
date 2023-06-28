@@ -2,7 +2,7 @@
     {
       "username": "annisa",
       "yearBorn": 2000,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "apoteker",
       "summary": "aku tinggal di bogor. aku suka memelihara kucing dan hamster.",
@@ -14,7 +14,7 @@
     {
       "username": "atika",
       "yearBorn": 1999,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "marketing",
       "summary": "aku suka traveling kalo lagi liburan.",
@@ -26,7 +26,7 @@
     {
       "username": "avi",
       "yearBorn": 1999,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "SMA",
       "job": "musisi",
       "summary": "aku suka memasak. punya bisnis kue yang dijual secara online.",
@@ -38,7 +38,7 @@
     {
       "username": "bintang",
       "yearBorn": 1998,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "guru matematika",
       "summary": "saya mengajar di madrasah aliyah di daerah serpong.",
@@ -50,7 +50,7 @@
     {
       "username": "caca",
       "yearBorn": 1998,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "apoteker",
       "summary": "saya bekerja di sebuah apotek di jogjga",
@@ -62,7 +62,7 @@
     {
       "username": "dea",
       "yearBorn": 1997,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "atlet",
       "summary": "saya atlet memanah, alumni ponpes an-nur malang, selain memanah saya juga suka bulu tangkis",
@@ -74,7 +74,7 @@
     {
       "username": "diah",
       "yearBorn": 1996,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S2",
       "job": "engineering manager",
       "summary": "saya EM di sebuah startup e-commerce di jakarta.",
@@ -86,7 +86,7 @@
     {
       "username": "dina",
       "yearBorn": 1995,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S2",
       "job": "dokter",
       "summary": "saya praktek di sebuah rumah sakit ibu dan anak di bandung.",
@@ -98,7 +98,7 @@
     {
       "username": "eva",
       "yearBorn": 1995,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "D3",
       "job": "sekretaris",
       "summary": "saya sekretaris di pemda DKI. saya suka nonton ceramahnya ustadz abdul somad.",
@@ -110,7 +110,7 @@
     {
       "username": "farah",
       "yearBorn": 1995,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S2",
       "job": "peneliti",
       "summary": "saya peneliti di LPEM FEUI. saya suka baca karya-karya nya ustadz quraish shihab.",
@@ -122,7 +122,7 @@
     {
       "username": "fika",
       "yearBorn": 1993,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "akuntan",
       "summary": "saya bekerja sebagai seorang akuntan di sebuah bank palangkaraya",
@@ -134,7 +134,7 @@
     {
       "username": "gita",
       "yearBorn": 1993,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "kepala sekolah",
       "summary": "saya kepala sekolah sebuah SDIT di daerah serang, saya sedang berusaha menghafal quran",
@@ -146,7 +146,7 @@
     {
       "username": "hana",
       "yearBorn": 1993,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "SMA",
       "job": "driver",
       "summary": "saya suka mendengarkan cermahnya ustadz firanda, saya berusaha mengikuti sunnah",
@@ -158,7 +158,7 @@
     {
       "username": "jihan",
       "yearBorn": 1992,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "S1",
       "job": "perawat",
       "summary": "saya perawat di RSUD Cengkareng. saya suka film drama korea.",
@@ -170,7 +170,7 @@
     {
       "username": "nabila",
       "yearBorn": 1992,
-      "sex": "f",
+      "gender": "f",
       "lastEducation": "SMA",
       "job": "guru",
       "summary": "saya nahdliyin, alumni ponpes tahfidz quran lp3ia di rembang, saya suka memasak, sehari-hari saya mengajar",

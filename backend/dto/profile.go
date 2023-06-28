@@ -11,7 +11,7 @@ type Profile struct {
 	IsVerified    bool    `json:"is_verified"`
 	IsPremium     bool    `json:"is_premium"`
 	YearBorn      int     `json:"year_born"`
-	Sex           string  `json:"sex"`
+	Gender        string  `json:"gender"`
 	LastEducation string  `json:"last_education"`
 	Summary       string  `json:"summary"`
 
@@ -30,7 +30,7 @@ func NewProfile(user entity.User) Profile {
 		IsVerified:    user.Profile.IsVerified,
 		IsPremium:     user.Profile.IsPremium,
 		YearBorn:      user.Profile.YearBorn,
-		Sex:           user.Profile.Sex,
+		Gender:        user.Profile.Gender,
 		LastEducation: user.Profile.LastEducation,
 		Summary:       user.Profile.Summary,
 
@@ -45,7 +45,7 @@ func NewProfile(user entity.User) Profile {
 type ProfileIndex struct {
 	UserID             string    `json:"user_id"`
 	YearBorn           int       `json:"year_born"`
-	Sex                string    `json:"sex"`
+	Gender             string    `json:"gender"`
 	LastEducation      string    `json:"last_education"`
 	Summary            string    `json:"summary"`
 	SummaryDenseVector []float32 `json:"summary_dense_vector"`
@@ -55,7 +55,7 @@ func NewProfileIndex(profile entity.UserProfile) (*ProfileIndex, error) {
 	return &ProfileIndex{
 		UserID:        profile.UserID,
 		YearBorn:      profile.YearBorn,
-		Sex:           profile.Sex,
+		Gender:        profile.Gender,
 		LastEducation: profile.LastEducation,
 		Summary:       profile.Summary,
 	}, nil
@@ -66,7 +66,7 @@ type CompleteProfileInput struct {
 	SelfieWithIDCardURL string `json:"selfieWithIDCardURL" binding:"required"`
 
 	YearBorn      int      `json:"yearBorn" binding:"required"`
-	Sex           string   `json:"sex" binding:"required,oneof=m f"`
+	Gender        string   `json:"gender" binding:"required,oneof=m f"`
 	LastEducation string   `json:"lastEducation" binding:"required"`
 	Summary       string   `json:"summary" binding:"required"`
 	PhotoURLs     []string `json:"photoUrls" binding:"required"`

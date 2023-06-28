@@ -9,7 +9,7 @@ var Index = `{
             "year_born":{
                 "type":"short"
             },
-            "sex":{
+            "gender":{
                 "type":"keyword"
             },
             "last_education":{

@@ -12,6 +12,5 @@ type User struct {
 	Profile          UserProfile
 	Photos           []UserPhoto
 	MatchingProfiles []UserMatchingProfile
-	Likers           []UserLiker
-	PendingMatches   []UserPendingMatch
+	Likes            []Like
 }
